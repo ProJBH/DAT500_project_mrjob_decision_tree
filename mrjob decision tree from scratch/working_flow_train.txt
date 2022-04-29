@@ -1,0 +1,101 @@
+===================================After preprocessing===================================
+
+1. Spliting
+Input file name & loc in HDFS:
+name:part-00000
+loc:/dis_materials/bohuajia/datasets/train_full_1m_to_csv/part-00000
+
+Main program name & loc in local:
+name:split_train_map.py
+loc:/home/ubuntu/bohuajia/scratch/split_train_map.py
+
+Opt name & loc in HDFS:
+name:part-00000
+loc:/dis_materials/bohuajia/datasets/train_split_opt/part-00000
+
+Command:
+hdfs dfs -rm -R -skipTrash /dis_materials/bohuajia/datasets/train_s*;python3 /home/ubuntu/bohuajia/scratch/split_train_map.py --hadoop-streaming-jar /usr/local/hadoop/hadoop-3.2.1/share/hadoop/tools/lib/hadoop-streaming-3.2.1.jar -r hadoop hdfs://namenode:9000/dis_materials/bohuajia/datasets/train_full_1m_to_csv/part-00000 --output-dir hdfs://namenode:9000/dis_materials/bohuajia/datasets/train_split_opt --no-output;rm -r part-00000;hdfs dfs -copyToLocal /dis_materials/bohuajia/datasets/train_split_opt/part-00000 /home/ubuntu/bohuajia/datasets/
+
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+2 Transforming
+
+2.1 Converting sub training
+Input file name & loc in HDFS:
+name:part-00000
+loc:/dis_materials/bohuajia/datasets/train_split_opt/part-00000
+
+Main program name & loc in local:
+name:preduce_subtrain_csv_map.py
+loc:/home/ubuntu/bohuajia/scratch/preduce_subtrain_csv_map.py
+
+Opt name & loc in HDFS:
+name:part-00000
+loc:/dis_materials/bohuajia/datasets/train_split_opt_to_subtrain_csv/part-00000
+
+Command:
+hdfs dfs -rm -R -skipTrash /dis_materials/bohuajia/datasets/train_split_opt_to_subtrain_csv;hadoop  jar /usr/local/hadoop/hadoop-3.2.1/share/hadoop/tools/lib/hadoop-streaming-3.2.1.jar -input hdfs:///dis_materials/bohuajia/datasets/train_split_opt/part-00000 -output hdfs:///dis_materials/bohuajia/datasets/train_split_opt_to_subtrain_csv -mapper /home/ubuntu/bohuajia/scratch/preduce_subtrain_csv_map.py -file /home/ubuntu/bohuajia/scratch/preduce_subtrain_csv_map.py;rm -r part-00000;hdfs dfs -copyToLocal /dis_materials/bohuajia/datasets/train_split_opt_to_subtrain_csv/part-00000 /home/ubuntu/bohuajia/datasets/
+
+2.2 Converting sub testing
+Input file name & loc in HDFS:
+name:part-00000
+loc:/dis_materials/bohuajia/datasets/train_split_opt/part-00000
+
+Main program name & loc in local:
+name:preduce_subtest_csv_map.py
+loc:/home/ubuntu/bohuajia/scratch/preduce_subtest_csv_map.py
+
+Opt name & loc in HDFS:
+name:part-00000
+loc:/dis_materials/bohuajia/datasets/train_split_opt_to_subtest_csv/part-00000
+
+Command1:
+hdfs dfs -rm -R -skipTrash /dis_materials/bohuajia/datasets/train_split_opt_to_subtest_csv;hadoop  jar /usr/local/hadoop/hadoop-3.2.1/share/hadoop/tools/lib/hadoop-streaming-3.2.1.jar -input hdfs:///dis_materials/bohuajia/datasets/train_split_opt/part-00000 -output hdfs:///dis_materials/bohuajia/datasets/train_split_opt_to_subtest_csv -mapper /home/ubuntu/bohuajia/scratch/preduce_subtest_csv_map.py -file /home/ubuntu/bohuajia/scratch/preduce_subtest_csv_map.py;rm -r part-00000;hdfs dfs -copyToLocal /dis_materials/bohuajia/datasets/train_split_opt_to_subtest_csv/part-00000 /home/ubuntu/bohuajia/datasets/
+Command2:
+Rename the opt part-00000 to train_split_opt_to_subtest_csv
+
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+3. Building Decision Tree
+Input file name & loc in HDFS:
+name:part-00000
+loc:/dis_materials/bohuajia/datasets/train_full_1m_to_csv/part-00000
+
+Main program name & loc in local:
+name:dt_map.py
+loc:/home/ubuntu/bohuajia/scratch/dt_map.py
+
+Opt name & loc in HDFS:
+name:part-00000
+loc:/dis_materials/bohuajia/datasets/dt_map_out/part-00000
+
+Command1:
+zip -r DT.zip /home/ubuntu/bohuajia/scratch/DecisionTree.py;mv DT.zip DT.mod
+
+Command2:
+hdfs dfs -rm -R -skipTrash /dis_materials/bohuajia/datasets/dt_map_out;hadoop  jar /usr/local/hadoop/hadoop-3.2.1/share/hadoop/tools/lib/hadoop-streaming-3.2.1.jar -input hdfs://namenode:9000/dis_materials/bohuajia/datasets/train_full_1m_to_csv/part-00000 -output hdfs://namenode:9000/dis_materials/bohuajia/datasets/dt_map_out  -mapper /home/ubuntu/bohuajia/scratch/dt_map.py -file /home/ubuntu/bohuajia/scratch/dt_map.py -file /home/ubuntu/bohuajia/datasets/DT.mod;rm -r part-00000;hdfs dfs -copyToLocal /dis_materials/bohuajia/datasets/dt_map_out/part-00000 /home/ubuntu/bohuajia/datasets/
+
+Command3:
+Rename the opt part-00000 to tree_opt
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+4. Calculating accuracy
+Command1(combine the previous outpouts):
+cat train_split_opt_to_subtest_csv  tree_opt > subtesting_with_tree
+
+Command2:
+hdfs dfs -put -d subtesting_with_tree /dis_materials/bohuajia/datasets
+
+Input file name & loc in HDFS:
+name:part-00000
+loc:/dis_materials/bohuajia/datasets/train_split_opt_to_subtest_csv/part-00000
+
+Main program name & loc in local:
+name:cal_accuracy_map.py
+loc:/home/ubuntu/bohuajia/scratch/cal_accuracy_map.py
+
+Opt name & loc in HDFS:
+name:part-00000
+loc:/dis_materials/bohuajia/datasets/accuracy_map_out/part-00000
+
+Command2:
+hdfs dfs -rm -R -skipTrash /dis_materials/bohuajia/datasets/accuracy_map_out;hadoop  jar /usr/local/hadoop/hadoop-3.2.1/share/hadoop/tools/lib/hadoop-streaming-3.2.1.jar -input hdfs://namenode:9000/dis_materials/bohuajia/datasets/subtesting_with_tree -output hdfs://namenode:9000/dis_materials/bohuajia/datasets/accuracy_map_out  -mapper /home/ubuntu/bohuajia/scratch/cal_accuracy_map.py  -file /home/ubuntu/bohuajia/scratch/cal_accuracy_map.py -file /home/ubuntu/bohuajia/datasets/DT.mod;rm -r part-00000;hdfs dfs -copyToLocal /dis_materials/bohuajia/datasets/accuracy_map_out/part-00000 /home/ubuntu/bohuajia/datasets/
+
+===================================Done with training side===================================
