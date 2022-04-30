@@ -5,7 +5,7 @@ The main project aims to compare the performance between python, Hadoop, and Spa
 During the project, the core functionalities of the decision tree are from the following website [Decision Tree from Scratch](https://github.com/SebastianMantey/Decision-Tree-from-Scratch)
 ### Table of Contents
 1. [Decision Tree based on Mrjob](https://github.com/ProJBH/DAT500_project_mrjob_decision_tree/tree/main/mrjob%20decision%20tree%20from%20scratch)
-2. [Decision Tree based on sklearn]()
+2. [Decision Tree based on Sklearn](https://github.com/ProJBH/DAT500_project_mrjob_decision_tree/tree/main/Sklearn)
 3. [Decision Tree based on Spark]()
 4. [The Working flow](https://github.com/ProJBH/DAT500_project_mrjob_decision_tree/tree/main/Working%20flows)
 ### How to Install and Run the Project
