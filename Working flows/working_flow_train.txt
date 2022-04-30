@@ -3,7 +3,7 @@
 1. Spliting
 Input file name & loc in HDFS:
 name:part-00000
-loc:/dis_materials/bohuajia/datasets/train_full_1m_to_csv/part-00000
+loc:/dis_materials/bohuajia/datasets/train_full_to_csv/part-00000
 
 Main program name & loc in local:
 name:split_train_map.py
@@ -14,7 +14,7 @@ name:part-00000
 loc:/dis_materials/bohuajia/datasets/train_split_opt/part-00000
 
 Command:
-hdfs dfs -rm -R -skipTrash /dis_materials/bohuajia/datasets/train_s*;python3 /home/ubuntu/bohuajia/scratch/split_train_map.py --hadoop-streaming-jar /usr/local/hadoop/hadoop-3.2.1/share/hadoop/tools/lib/hadoop-streaming-3.2.1.jar -r hadoop hdfs://namenode:9000/dis_materials/bohuajia/datasets/train_full_1m_to_csv/part-00000 --output-dir hdfs://namenode:9000/dis_materials/bohuajia/datasets/train_split_opt --no-output;rm -r part-00000;hdfs dfs -copyToLocal /dis_materials/bohuajia/datasets/train_split_opt/part-00000 /home/ubuntu/bohuajia/datasets/
+hdfs dfs -rm -R -skipTrash /dis_materials/bohuajia/datasets/train_s*;python3 /home/ubuntu/bohuajia/scratch/split_train_map.py --hadoop-streaming-jar /usr/local/hadoop/hadoop-3.2.1/share/hadoop/tools/lib/hadoop-streaming-3.2.1.jar -r hadoop hdfs://namenode:9000/dis_materials/bohuajia/datasets/train_full_to_csv/part-00000 --output-dir hdfs://namenode:9000/dis_materials/bohuajia/datasets/train_split_opt --no-output;rm -r part-00000;hdfs dfs -copyToLocal /dis_materials/bohuajia/datasets/train_split_opt/part-00000 /home/ubuntu/bohuajia/datasets/
 
 =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 2 Transforming
@@ -57,7 +57,7 @@ Rename the opt part-00000 to train_split_opt_to_subtest_csv
 3. Building Decision Tree
 Input file name & loc in HDFS:
 name:part-00000
-loc:/dis_materials/bohuajia/datasets/train_full_1m_to_csv/part-00000
+loc:/dis_materials/bohuajia/datasets/train_full_to_csv/part-00000
 
 Main program name & loc in local:
 name:dt_map.py
@@ -71,7 +71,7 @@ Command1:
 zip -r DT.zip /home/ubuntu/bohuajia/scratch/DecisionTree.py;mv DT.zip DT.mod
 
 Command2:
-hdfs dfs -rm -R -skipTrash /dis_materials/bohuajia/datasets/dt_map_out;hadoop  jar /usr/local/hadoop/hadoop-3.2.1/share/hadoop/tools/lib/hadoop-streaming-3.2.1.jar -input hdfs://namenode:9000/dis_materials/bohuajia/datasets/train_full_1m_to_csv/part-00000 -output hdfs://namenode:9000/dis_materials/bohuajia/datasets/dt_map_out  -mapper /home/ubuntu/bohuajia/scratch/dt_map.py -file /home/ubuntu/bohuajia/scratch/dt_map.py -file /home/ubuntu/bohuajia/datasets/DT.mod;rm -r part-00000;hdfs dfs -copyToLocal /dis_materials/bohuajia/datasets/dt_map_out/part-00000 /home/ubuntu/bohuajia/datasets/
+hdfs dfs -rm -R -skipTrash /dis_materials/bohuajia/datasets/dt_map_out;hadoop  jar /usr/local/hadoop/hadoop-3.2.1/share/hadoop/tools/lib/hadoop-streaming-3.2.1.jar -input hdfs://namenode:9000/dis_materials/bohuajia/datasets/train_full_to_csv/part-00000 -output hdfs://namenode:9000/dis_materials/bohuajia/datasets/dt_map_out  -mapper /home/ubuntu/bohuajia/scratch/dt_map.py -file /home/ubuntu/bohuajia/scratch/dt_map.py -file /home/ubuntu/bohuajia/datasets/DT.mod;rm -r part-00000;hdfs dfs -copyToLocal /dis_materials/bohuajia/datasets/dt_map_out/part-00000 /home/ubuntu/bohuajia/datasets/
 
 Command3:
 Rename the opt part-00000 to tree_opt
