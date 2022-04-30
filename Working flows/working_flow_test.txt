@@ -7,6 +7,7 @@ rm -r test_full_with_tree;cat tree_opt test_full > test_full_with_tree
 Command:
 hdfs dfs -rm -R -skipTrash /dis_materials/bohuajia/datasets/test_full_with_tree;hdfs dfs -put -d test_full_with_tree /dis_materials/bohuajia/datasets
 
+4 Make prediction
 Input file name & loc in HDFS:
 name:test_full_with_tree
 loc:/dis_materials/bohuajia/datasets/test_full_with_tree
@@ -19,7 +20,7 @@ Opt folder name & loc in HDFS:
 name:prediction
 loc:/dis_materials/bohuajia/datasets/prediction
 
-Command3:
+Command:
 hdfs dfs -rm -R -skipTrash /dis_materials/bohuajia/datasets/prediction;hadoop  jar /usr/local/hadoop/hadoop-3.2.1/share/hadoop/tools/lib/hadoop-streaming-3.2.1.jar -input hdfs://namenode:9000/dis_materials/bohuajia/datasets/test_full_with_tree -output hdfs://namenode:9000/dis_materials/bohuajia/datasets/prediction  -mapper /home/ubuntu/bohuajia/scratch/make_prediction_map.py  -file /home/ubuntu/bohuajia/scratch/make_prediction_map.py -file /home/ubuntu/bohuajia/datasets/DT.mod;rm -r part-00000;hdfs dfs -copyToLocal /dis_materials/bohuajia/datasets/prediction/part-00000 /home/ubuntu/bohuajia/datasets/
 
 =========================================Finished=============================================

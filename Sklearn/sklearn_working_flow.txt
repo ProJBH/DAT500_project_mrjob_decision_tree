@@ -1,0 +1,60 @@
+=========================================Data sets preparation=========================================
+1.1 Preparation(training set)
+Input file name & loc in HDFS:
+name:train_full_categoricalToNumerical.csv
+loc:/dis_materials/dipanjan/csvfiles/
+
+Main program name & loc in local:
+name:sklearn_train_preparation_map.py
+loc:/home/ubuntu/bohuajia/Sklearn/sklearn_train_preparation_map.py
+
+Opt folder name & loc in HDFS:
+name:train_full_sklearn_preparation
+loc:/dis_materials/bohuajia/datasets/train_full_sklearn_preparation
+
+Command1:
+hdfs dfs -rm -R -skipTrash /dis_materials/bohuajia/datasets/train_full_sklearn_preparation;python3 /home/ubuntu/bohuajia/Sklearn/sklearn_train_preparation_map.py --hadoop-streaming-jar /usr/local/hadoop/hadoop-3.2.1/share/hadoop/tools/lib/hadoop-streaming-3.2.1.jar -r hadoop hdfs://namenode:9000/dis_materials/dipanjan/csvfiles/train_full_categoricalToNumerical.csv --output-dir hdfs://namenode:9000/dis_materials/bohuajia/datasets/train_full_sklearn_preparation --no-output;rm -r part-00000;hdfs dfs -copyToLocal /dis_materials/bohuajia/datasets/train_full_sklearn_preparation/part-00000 /home/ubuntu/bohuajia/datasets/
+Command2:
+Rename the opt part-00000 to sklearn_train_full
+
+1.2 Preparation(testing set)
+Input file name & loc in HDFS:
+name:test_full_categoricalToNumerical.csv
+loc:/dis_materials/dipanjan/csvfiles/
+
+Main program name & loc in local:
+name:sklearn_test_preparation_map.py
+loc:/home/ubuntu/bohuajia/Sklearn/sklearn_test_preparation_map.py
+
+Opt folder name & loc in HDFS:
+name:test_full_sklearn_preparation
+loc:/dis_materials/bohuajia/datasets/test_full_sklearn_preparation
+
+Command:
+hdfs dfs -rm -R -skipTrash /dis_materials/bohuajia/datasets/test_full_sklearn_preparation;python3 /home/ubuntu/bohuajia/Sklearn/sklearn_test_preparation_map.py --hadoop-streaming-jar /usr/local/hadoop/hadoop-3.2.1/share/hadoop/tools/lib/hadoop-streaming-3.2.1.jar -r hadoop hdfs://namenode:9000/dis_materials/dipanjan/csvfiles/test_full_categoricalToNumerical.csv --output-dir hdfs://namenode:9000/dis_materials/bohuajia/datasets/test_full_sklearn_preparation --no-output;rm -r part-00000;hdfs dfs -copyToLocal /dis_materials/bohuajia/datasets/test_full_sklearn_preparation/part-00000 /home/ubuntu/bohuajia/datasets/
+Command2:
+Rename the opt part-00000 to sklearn_test_full
+
+2. Combine sklearn_train_full with sklearn_test_full: 
+Command:
+cat sklearn_train_full sklearn_test_full > sklearn_full
+
+2.2 Upload the sklearn_full to hadoop fs:
+Command:
+hdfs dfs -rm -R -skipTrash /dis_materials/bohuajia/datasets/sklearn_full;hdfs dfs -put -d sklearn_full /dis_materials/bohuajia/datasets
+==========================================Making prediction==========================================
+3.Make prediction
+Input file name & loc in HDFS:
+name:sklearn_full
+loc:/dis_materials/bohuajia/datasets/sklearn_full
+
+Main program name & loc in local:
+name:sklearn_dt_map.py
+loc:/home/ubuntu/bohuajia/Sklearn/sklearn_dt_map.py
+
+Opt folder name & loc in HDFS:
+name:sklearn_prediction
+loc:/dis_materials/bohuajia/datasets/sklearn_prediction
+
+Command:
+hdfs dfs -rm -R -skipTrash /dis_materials/bohuajia/datasets/sklearn_prediction;hadoop  jar /usr/local/hadoop/hadoop-3.2.1/share/hadoop/tools/lib/hadoop-streaming-3.2.1.jar -input hdfs://namenode:9000/dis_materials/bohuajia/datasets/sklearn_full -output hdfs://namenode:9000/dis_materials/bohuajia/datasets/sklearn_prediction  -mapper /home/ubuntu/bohuajia/Sklearn/sklearn_dt_map.py  -file /home/ubuntu/bohuajia/Sklearn/sklearn_dt_map.py;rm -r part-00000;hdfs dfs -copyToLocal /dis_materials/bohuajia/datasets/sklearn_prediction/part-00000 /home/ubuntu/bohuajia/datasets/
