@@ -9,6 +9,6 @@ During the project, the core functionalities of the decision tree are from the f
 3. [The Working flow](https://github.com/ProJBH/DAT500_project_mrjob_decision_tree/tree/main/Working%20flows)
 ### How to Install and Run the Project
 1. [To install Spark on Ubuntu](https://phoenixnap.com/kb/install-spark-on-ubuntu)
-2. You can find how to run the project by reading [the working flow](https://github.com/ProJBH/DAT500_project_mrjob_decision_tree/tree/main/Working%20flows)
+2. You can find how to run the project in general by reading [the working flows](https://github.com/ProJBH/DAT500_project_mrjob_decision_tree/tree/main/Working%20flows)
 ### How to Use the Project
 Ideally, this project can be run at any size of the dataset and use the decision tree algorithm to predict the classified target value. The decision tree doesn't support regression prediction.
