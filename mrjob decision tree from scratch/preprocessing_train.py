@@ -11,7 +11,6 @@ class preprocessing(MRJob):
     def mapper(self, _, line):
         random.seed(datetime.now())
         key = random.random()
-        #row = line.split(',')
         rows = csv.reader([line])
         for row in rows:
             if row[1] != "gender":
@@ -103,7 +102,6 @@ class preprocessing(MRJob):
                 location_number_obj = row[69]
                 target = row[72]
                 tu = (customer_id,gender,status_x,verified_x,create_at_x, updated_at_x,location_number,location_type,vendor_id,latitude_x,longitude_x,latitude_y,longitude_y,vendor_category_en,delivery_charge,serving_distance,is_open,prepration_time,commission,is_akeed_delivering,discount_percentage,status_y,verified_y,rank,language,vendor_rating,sunday,monday,tuesday,wednesday,thursday,friday,saturday,primary_tags,open_close_flags,vendor_tag_sum,created_at_y,updated_at_y,device_type,location_number_obj,target)
-            #lst = ["customer_id","gender","status_x","verified_x","create_at_x","updated_at_x","location_number","location_type","vendor_id","latitude_x","longitude_x","latitude_y","longitude_y","vendor_category_en","delivery_charge","serving_distance","is_open","prepration_time","commission","is_akeed_delivering","discount_percentage","status_y","verified_y","rank","language","vendor_rating","sunday","monday","tuesday","wednesday","thursday","friday","saturday","primary_tags","open_close_flags","vendor_tag_sum","created_at_y","updated_at_y","device_type","location_number_obj","target"]
                 yield (key,tu)
         
     def reducer(self, key, values):

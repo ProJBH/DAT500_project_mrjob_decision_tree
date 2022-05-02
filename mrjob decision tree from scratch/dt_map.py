@@ -3,7 +3,6 @@ import sys
 import pandas as pd
 import zipimport
 import numpy as np
-# import DecisionTree as dt
 
 importer = zipimport.zipimporter('DT.mod')
 dt = importer.load_module('DecisionTree')

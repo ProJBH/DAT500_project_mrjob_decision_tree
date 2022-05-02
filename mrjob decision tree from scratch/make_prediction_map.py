@@ -27,12 +27,3 @@ for line in sys.stdin:
             x = dt.make_prediction(df.iloc[0],trees[0])
             row.append(x)
             print(row)
-    '''else:
-        line = line.strip()
-        row = line.split(',')
-        if 'customer_id' not in str(row):
-            added_value_tuple = (row,)
-            csv_context = csv_context + added_value_tuple
-
-df = pd.DataFrame(csv_context, columns=column_name)
-df = df.astype({'sunday': np.float64, 'monday': np.float64, 'tuesday': np.float64, 'wednesday': np.float64, 'thursday': np.float64, 'friday': np.float64, 'saturday': np.float64, 'vendor_tag_sum': np.float64, 'longitude_x': np.float64, 'longitude_y': np.float64, 'latitude_x': np.float64, 'latitude_y': np.float64, 'vendor_rating': np.float64})'''

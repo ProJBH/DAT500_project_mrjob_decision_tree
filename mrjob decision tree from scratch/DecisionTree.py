@@ -9,9 +9,7 @@ def train_test_split(df, sub_size):
     indices = df.index.tolist()
     test_indices = random.sample(population=indices, k=test_size)
     train_df = df.loc[test_indices]
-    #test_csv = test_df.to_csv(index=False)
     test_df = df.drop(test_indices)
-    #train_csv = train_df.to_csv(index=False)
     return train_df, test_df
 
 
