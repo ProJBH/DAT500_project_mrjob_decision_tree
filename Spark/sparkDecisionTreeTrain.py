@@ -1,50 +1,32 @@
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import (
-    regexp_replace,
-    col,
-    isnan,
-    when,
-    count,
-    to_timestamp,
-    from_unixtime,
-    unix_timestamp,
-    date_format,
-    round,
-    size,
-    split,
-)
-from pyspark.sql.types import StringType, DoubleType, IntegerType, TimestampType
-from sklearn.impute import SimpleImputer
-from pyspark.ml.feature import (
-    StringIndexer,
-    VectorAssembler,
-    OneHotEncoder,
-    VectorIndexer,
-)
+from pyspark.ml.feature import VectorAssembler
 from pyspark.ml.classification import DecisionTreeClassifier
 from pyspark.ml.evaluation import MulticlassClassificationEvaluator
-from pyspark.ml import Pipeline
-from pyspark.ml.linalg import Vector
-import numpy as np
-from pyspark.sql.types import DateType
-import calendar, time
+import time
 
 
 def main():
     start_time = time.time()
+    # loading data from HDFS
+    ##################################################
     flieList = {
-        0: "hdfs://namenode:9000/dis_materials/dipanjan/train_full_1million_categoricalToNumerical_2_output/part*.csv",
+        0: "hdfs://namenode:9000/dis_materials/dipanjan/csvfiles/test_full_categoricalToNumerical.csv",
         1: "hdfs://namenode:9000/dis_materials/dipanjan/csvfiles/train_full_categoricalToNumerical.csv",
-        2: "hdfs://namenode:9000/dis_materials/dipanjan/train_full_50thousand_output_categorical_to_numerical/part*.csv",
-        3: "hdfs://namenode:9000/dis_materials/dipanjan/test_full_50thousand_categoricalToNumerical_output/part*.csv",
     }
-    spark = SparkSession.builder.appName("how to read csv file").getOrCreate()
+    # creating spark session
+    ##################################################
+    spark = SparkSession.builder.appName(
+        "Decision tree - testing with training set"
+    ).getOrCreate()
+
     sparkDF = spark.read.csv(
-        flieList[0],
+        flieList[1],
         header=True,
         inferSchema=True,
     )
 
+    # selecting feature columns
+    ##################################################
     featureColumns = (
         "customer_id",
         "gender",
@@ -89,12 +71,9 @@ def main():
         "vendor_rating",
     )
 
+    # initializing vector assembler and decision tree
+    ##################################################
     assembler = VectorAssembler(inputCols=featureColumns, outputCol="features")
-    output = assembler.transform(sparkDF)
-    model_df = output.select("features", "target")
-    # model_df.show(1, vertical=True, truncate=False)
-    trainSet, testSet = model_df.randomSplit([0.7, 0.3], seed=42)
-    # output.show(2, vertical=True)
     dtc = DecisionTreeClassifier(
         labelCol="target",
         featuresCol="features",
@@ -102,14 +81,26 @@ def main():
         maxDepth=4,
         impurity="entropy",
     )
+
+    # making predictions
+    ##################################################
+    output = assembler.transform(sparkDF)
+    model_df = output.select("features", "target")
+    trainSet, testSet = model_df.randomSplit([0.7, 0.3], seed=42)
     dtcModel = dtc.fit(trainSet)
     dtcPred = dtcModel.transform(testSet)
+
     evaluator = MulticlassClassificationEvaluator(
         labelCol="target", predictionCol="prediction", metricName="accuracy"
     )
+
+    # calculate accuracy
+    ##################################################
     dtcAcc = evaluator.evaluate(dtcPred)
     print("accuracy", dtcAcc)
 
+    # calculate execution time
+    ##################################################
     end_time = time.time() - start_time
     final_time = time.strftime("%H:%M:%S", time.gmtime(end_time))
     print("Total execution time: ", final_time)
