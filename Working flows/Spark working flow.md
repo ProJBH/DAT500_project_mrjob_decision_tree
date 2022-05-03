@@ -49,7 +49,7 @@ _This section is identical to the previous section(1. Testing dataset) but we ar
 - After getting the preprocessed data from testing and training set we applied the decision tree algorithm from mllib.classification
 - We worked with both testing and training set and made a driver program to get the final outcome from the dataset
 - The driver program located in: _/home/ubuntu/dipanjan/sparkDecisionTree.py_
-- Start the Program from linux terminal: `spark-submit --master yarn --executor-cores 4 --num-executors 4 --executor-memory 6g --driver-memory 1g --conf spark.kryoserializer.buffer.max=512m sparkDecisionTree.py`
+- Start the Program from linux terminal: `spark-submit --master yarn --executor-cores 4 --num-executors 4 --executor-memory 6g --driver-memory 1g --conf spark.kryoserializer.buffer.max=512m sparkDecisionTreeTrainTest.py`
 - Test dataset file location: _hdfs:9000//dis_materials/project_data/test_full_preprocessed_categoricalToNumerical.csv_
 - Train dataset file location: _hdfs:9000//dis_materials/project_data/train_full_preprocessed_categoricalToNumerical.csv_
 - Result of this program can be saved in HDFS or it is also possible to show it to the console.
